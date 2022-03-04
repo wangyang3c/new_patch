@@ -6,7 +6,7 @@
   <Data key="DataVersionKey" value="2" />
   <Group key="DWRInstGuidMapping">
     <Group key="Pin">
-      <Data key="0b78b9ab-3ebd-496f-a2bb-212e1c9af988" value="Pin_1" />
+      <Data key="0b78b9ab-3ebd-496f-a2bb-212e1c9af988" value="F1" />
       <Data key="7a5cb903-58a3-4085-8b2c-63e441ed79db" value="O2" />
       <Data key="7e67dd64-8df6-4f79-8781-04319fc7321c" value="Reference0" />
       <Data key="9fa6d9ba-1401-46e7-a31d-b93369d55773" value="I5" />
@@ -18,6 +18,7 @@
       <Data key="77b7710f-43a6-480a-9c7c-4bb1171ccb15" value="O1" />
       <Data key="102ef652-b754-4940-b451-cfe9231c3e75" value="O6" />
       <Data key="321c3901-73c1-445e-9262-329c290b73bd" value="O4" />
+      <Data key="761b1af2-4c4e-4d25-9f37-0f372ed59714" value="LED" />
       <Data key="3209fdb1-66b7-4924-a375-1ba70e951b65" value="Reference1" />
       <Data key="5111f1e2-6754-4fdf-84a4-a947bf777457" value="Pin_1" />
       <Data key="19865ec3-9850-4a52-b375-209fca2370e6" value="O3" />
@@ -26,14 +27,14 @@
       <Data key="12712113-4fc1-46b2-8f75-ebef957e3280/65f3af6c-759b-4ccb-8c66-5c95ba1f5f4f" value="UART_tx" />
       <Data key="12712113-4fc1-46b2-8f75-ebef957e3280/b7e8018e-1ef7-49c0-b5a5-61641a03e31c" value="UART_rx" />
       <Data key="16534099-ea23-431e-995c-79dee61a8960" value="I1" />
-      <Data key="aa962083-b68c-45ea-b29b-4d9766c70848" value="Pin_3" />
+      <Data key="aa962083-b68c-45ea-b29b-4d9766c70848" value="A1" />
       <Data key="af97d4fa-ea44-46b6-bbc2-b62b407dc192" value="I6" />
       <Data key="c3f60a0f-1f6a-4f65-8229-66889c587e45" value="I7" />
       <Data key="ce7c464e-06ac-454b-90cf-d662d550f0d8" value="GND" />
-      <Data key="d6693064-a570-43f3-addb-ceda4138aa12" value="Pin_4" />
+      <Data key="d6693064-a570-43f3-addb-ceda4138aa12" value="A2" />
       <Data key="df01e73d-cde9-433e-9cc4-f19e458811ef" value="Reference2" />
       <Data key="e9d5c3f0-f8b8-4c57-a596-62b002a000cc" value="I4" />
-      <Data key="ede6ccb7-958b-4643-9e9b-3b399652e428" value="Pin_2" />
+      <Data key="ede6ccb7-958b-4643-9e9b-3b399652e428" value="F2" />
       <Data key="f12b4274-678d-4f2c-9f90-cb4c415131da" value="O7" />
       <Data key="f508acd2-52b7-4a99-bc32-239b5fc03b88" value="GND" />
     </Group>
@@ -681,6 +682,11 @@
     <Group key="321c3901-73c1-445e-9262-329c290b73bd">
       <Group key="0">
         <Data key="Port Format" value="10,4" />
+      </Group>
+    </Group>
+    <Group key="761b1af2-4c4e-4d25-9f37-0f372ed59714">
+      <Group key="0">
+        <Data key="Port Format" value="1,5" />
       </Group>
     </Group>
     <Group key="3209fdb1-66b7-4924-a375-1ba70e951b65">

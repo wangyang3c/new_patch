@@ -18,40 +18,18 @@
  ****************************************/
 void sendData(void);
 void readADC(void);
-void SysTick_Callback();
-void readline(char* buffer);
-void receiveCommand(void);
-void setOptimalReference(void);
 
 /***************************************
  *            Constants
  ****************************************/
-#define TELEGRAM_HEADER 0x81
-#define TELEGRAM_FOOTER 0x7E
-
-#define TELEGRAM_TYPE_TEST 0x01
-#define TELEGRAM_TYPE_SET_LED 0x02
-#define TELEGRAM_TYPE_GET_SINGLE_SENSOR_DATA 0x03
-#define TELEGRAM_TYPE_GET_CONTINUOUS_SENSOR_DATA 0x04
-#define TELEGRAM_TYPE_SET_OFFSET_AUTO 0x05
-#define TELEGRAM_TYPE_SET_OFFSET_MANUAL 0x06
-#define TELEGRAM_TYPE_SET_GAIN 0x07
-#define TELEGRAM_TYPE_STOP_SENSOR_DATA 0x08
-#define TELEGRAM_TYPE_GET_SAMPLING_FREQUENCY 0x09
-#define TELEGRAM_TYPE_GET_TIMESTAMP 0x0A
 
 
 
 /***************************************
  * Global variables
  ****************************************/
-char command;
-int timestamp;
-float offset = 0.0;
 float v_patch[8][8];
 int referenceChannel = 1;
-
-bool send = false;
 
 /*******************************************************************************
  * Function Name: main
@@ -96,15 +74,9 @@ int main(void)
     for (;;)
     {
         /* Place your application code here. */
-        if(Cy_SCB_UART_GetNumInRxFifo(UART_HW)>0) {
-            receiveCommand();
-        }    
-        if(send) {
-            readADC();
-            //sendData();
-        }
-
-        CyDelay(100);
+        readADC();
+        sendData();
+        CyDelay(10);
     }
 }
 
@@ -141,37 +113,6 @@ void readADC(void)
 
 }
 
-void SysTick_Callback() {
-    timestamp++;
-}
-
-void readline(char* buffer) 
-{   
-    char temp[1];
-    int i = 0;
-    while(true)
-    {   
-        Cy_SCB_UART_GetArrayBlocking(UART_HW, temp, 1);
-        buffer[i] = temp[0];
-        ++i; 
-        
-        
-        if(temp[0] == '\n')  {
-
-            break;
-        }
-        //CyDelayUs(1000);
-        // byte duration of 115200 is 86.806 µs https://lucidar.me/en/serialib/most-used-baud-rates-table/
-    }
-              
-}
-
-void receiveCommand() {
-    
-    char buffer[64];
-    readline(buffer);
-    if(buffer[0]=='0') printf("666");
-}
 
 
 /* [] END OF FILE */

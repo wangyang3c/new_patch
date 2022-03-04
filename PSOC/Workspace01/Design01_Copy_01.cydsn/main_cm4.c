@@ -14,61 +14,195 @@
 #include <stdlib.h>
 #include <string.h>
 
-/***************************************
- *         Function Prototypes
- ****************************************/
-void Timer_Config(void);
-void TimerInterruptHandler(void);
-void sendData(void);
-void readADC(void);
-void SysTick_Callback();
-void readUntil(char* buffer, size_t size, const char expected);
-void readline(char* buffer, size_t size);
-void write(char* buffer);
-void receiveRequest(void);
-void sendResponse(char* buffer, size_t size, char type);
-void insertString(char* buffer, size_t size, unsigned int position, char* str);
+
+
 
 
 /***************************************
  *            Constants
  ****************************************/
-#define TELEGRAM_START '\x81'
-#define TELEGRAM_END '\x7E'
+#define NUM_PATCH_X 8
+#define NUM_PATCH_Y 8
+#define AMUX_1_INPUT_INDEX_REFERENCE0 8
+#define AMUX_1_INPUT_INDEX_REFERENCE1 9
+#define AMUX_1_INPUT_INDEX_REFERENCE2 10
+#define AMUX_2_INPUT_INDEX_GND 8
 
+
+
+
+// Telegram pblic
+#define TELEGRAM_START_BYTE '\x81'
+#define TELEGRAM_END_BYTE '\x7E'
+#define TELEGRAM_BYTE_INDEX_START_BYTE 0
+#define TELEGRAM_BYTE_INDEX_TYPE 1
+#define TELEGRAM_BYTE_INDEX_ARGS_START 2
+
+// Test
 #define TELEGRAM_TYPE_TEST '\x01'
-#define TELEGRAM_TYPE_SET_LED '\x02'
-#define TELEGRAM_TYPE_GET_SINGLE_SENSOR_DATA '\x03'
-#define TELEGRAM_TYPE_GET_CONTINUOUS_SENSOR_DATA '\x04'
-#define TELEGRAM_TYPE_SET_OFFSET_AUTO '\x05'
-#define TELEGRAM_TYPE_SET_OFFSET_MANUAL '\x06'
-#define TELEGRAM_TYPE_SET_GAIN '\x07'
-#define TELEGRAM_TYPE_STOP_SENSOR_DATA '\x08'
-#define TELEGRAM_TYPE_GET_SAMPLING_FREQUENCY '\x09'
-#define TELEGRAM_TYPE_GET_TIMESTAMP '\x0A'
-
+// Request
+#define REQUEST_LENGTH_TEST 3
+// Response
+#define RESPONSE_LENGTH_TEST 8
 #define RESPONSE_TEST "Test\0"
+#define RESPONSE_BYTE_INDEX_TEST_END_BYTE 7
+
+
+// Set LED
+#define TELEGRAM_TYPE_SET_LED '\x02'
+// Request
+#define REQUEST_LENGTH_LED 4
+#define REQUEST_BYTE_INDEX_LED_STATUS 2
+#define LED_OFF 0x00
+#define LED_ON 0x01
+// Response
+
+
+
+// Single/Continuous data
+#define TELEGRAM_TYPE_GET_SINGLE_DATA '\x03'
+#define TELEGRAM_TYPE_GET_CONTINUOUS_DATA '\x04'
+// Request
+#define REQUEST_LENGTH_GET_DATA 12
+#define REQUEST_BYTE_INDEX_GET_DATA_XMIN 2
+#define REQUEST_BYTE_INDEX_GET_DATA_XMAX 3
+#define REQUEST_BYTE_INDEX_GET_DATA_YMIN 4
+#define REQUEST_BYTE_INDEX_GET_DATA_YMAX 5
+#define REQUEST_BYTE_INDEX_GET_DATA_MVALUES 6
+#define REQUEST_BYTE_INDEX_GET_DATA_SWITCH_HIGH 7
+#define REQUEST_BYTE_INDEX_GET_DATA_SWITCH_LOW 8
+#define REQUEST_BYTE_INDEX_GET_DATA_MEAS_HIGH 9
+#define REQUEST_BYTE_INDEX_GET_DATA_MEAS_LOW 10
+// Response
+#define REPONSE_LENGTH_GET_DATA 131 // 1+1+8*8*2+1 = 131
+#define RESPONSE_BYTE_INDEX_GET_DATA_END_BYTE 130
+
+
+
+// Set offset auto
+#define TELEGRAM_TYPE_SET_OFFSET_AUTO '\x05'
+// Request
+#define REQUEST_LENGTH_SET_OFFSET_AUTO 3
+// Response
+#define RESPONSE_LENGTH_SET_OFFSET_AUTO 131
+#define RESPONSE_BYTE_INDEX_SET_OFFSET_AUTO_END_BYTE 130
+
+
+// Set offset manual
+#define TELEGRAM_TYPE_SET_OFFSET_MANUAL '\x06'
+// Request
+#define REQUEST_LENGTH_SET_OFFSET_MANUAL 131
+// Response
+
+
+// Set gain
+#define TELEGRAM_TYPE_SET_GAIN '\x07'
+// Request
+#define REQUEST_LENGTH_SET_GAIN
+// Response
+
+
+
+// Stop data
+#define TELEGRAM_TYPE_STOP_SENSOR_DATA '\x08'
+// Request
+#define REQUEST_LENGTH_STOP_SENSOR_DATA 3
+// Response
+
+
+// Get sampling frequency
+#define TELEGRAM_TYPE_GET_SAMPLING_FREQUENCY '\x09'
+// Request
+#define REQUEST_LENGTH_GET_SAMPLING_FREQUENCY   3
+// Response
+#define RESPONSE_LENGTH_GET_SAMPLING_FREQUENCY  5
+#define RESPONSE_BYTE_INDEX_GET_SAMPLING_FREQUENCY_SFREQ_COUNT_HIGH 2
+#define RESPONSE_BYTE_INDEX_GET_SAMPLING_FREQUENCY_SFREQ_COUNT_LOW  3
+#define RESPONSE_BYTE_INDEX_GET_SAMPLING_FREQUENCY_END_BYTE 4
+
+// Get timestamp
+#define TELEGRAM_TYPE_GET_TIMESTAMP '\x0A'
+// Request
+#define REQUEST_LENGTH_GET_TIMESTAMP    3
+// Response
+#define RESPONSE_LENGTH_GET_TIMESTAMP   7
+#define RESPONSE_BYTE_INDEX_GET_TIMESTAMP_TIMESTAMP_PART_1   2
+#define RESPONSE_BYTE_INDEX_GET_TIMESTAMP_TIMESTAMP_PART_2   3
+#define RESPONSE_BYTE_INDEX_GET_TIMESTAMP_TIMESTAMP_PART_3   4
+#define RESPONSE_BYTE_INDEX_GET_TIMESTAMP_TIMESTAMP_PART_4   5
+#define RESPONSE_BYTE_INDEX_GET_TIMESTAMP_END_BYTE 6
+
+//Error
+#define TELEGRAM_TYPE_ERROR '\xFF'
+#define RESPONSE_LENGTH_ERROR 3
+#define RESPONSE_BYTE_INDEX_ERROR_END_BYTE 2
+
+
+
+
+// Setting
+#define GET_DATA_MODE_STOP 0
+#define GET_DATA_MODE_SINGLE 1
+#define GET_DATA_MODE_CONTINUNOUS 2
+
+
+
+
+/***************************************
+ *         Function Prototypes
+ ****************************************/
+void sendData(void);
+void readADC(void);
+void setLED(void);
+void setOffsetAuto(void);
+void setOffsetManual(uint16_t offset, uint8_t y, uint8_t x);
+
+void receiveRequest(void);
+void sendResponse(char type);
+
+void readUntil(uint8_t* buffer, size_t size, const uint8_t expected);
+void write(uint8_t* buffer, size_t size);
+void pushStringToBuffer(uint8_t* buffer, size_t size, unsigned int position, char* str);
+
 
 /***************************************
  * Global variables
  ****************************************/
-char command;
-int timestamp;
 float offset[8][8];
 float v_patch[8][8];
 int referenceChannel = 1;
 
 struct {
-    bool ledStatus;
-    float offset;
-    int reference;
-    int samplingFrequency;
-} setting;
+    uint8_t ledStatus;
+    uint8_t xmin;
+    uint8_t xmax;
+    uint8_t ymin;
+    uint8_t ymax;
+    uint8_t m_values;
+    uint16_t delay_switch;   //us
+    uint16_t delay_meas;     //ms
+    uint8_t channel_reference;
+    uint8_t get_data_mode;
+} measurementConfig = 
+{
+    .ledStatus = LED_ON,
+    .xmin = 0,
+    .xmax = 7,
+    .ymin = 0,
+    .ymax = 7,
+    .m_values = 16,
+    .delay_switch = 300,
+    .delay_meas = 50,
+    .channel_reference = AMUX_1_INPUT_INDEX_REFERENCE0,
+    .get_data_mode = GET_DATA_MODE_STOP
+};
+
 
 struct {
     int timestamp;
-    float voltages[8][8];
-} data;
+    uint16_t voltage_count[NUM_PATCH_Y][NUM_PATCH_X];
+    uint16_t offset_count[NUM_PATCH_Y][NUM_PATCH_X];
+} measurementData;
 
 
 
@@ -95,13 +229,11 @@ int main(void)
     setvbuf(stdin, NULL, _IONBF, 0);
 
     AMux_1_Start();
-    AMux_1_Connect(8);
+    AMux_1_Connect(measurementConfig.channel_reference);
 
     AMux_2_Start();
-    AMux_2_Connect(8);
+    AMux_2_Connect(AMUX_2_INPUT_INDEX_GND);
 
-    Timer_Start();
-    Timer_Config();
 
     ADC_Start();
 
@@ -119,141 +251,242 @@ int main(void)
         /* Place your application code here. */
         if(Cy_SCB_UART_GetNumInRxFifo(UART_HW)>0) {
             receiveRequest();
-        }    
-        CyDelay(100);
+        }
+        readADC();
+        switch(measurementConfig.get_data_mode) {
+            case GET_DATA_MODE_STOP:
+                break;
+            case GET_DATA_MODE_SINGLE:
+                sendResponse(TELEGRAM_TYPE_GET_SINGLE_DATA);
+                measurementConfig.get_data_mode = GET_DATA_MODE_STOP;
+                break;
+            case GET_DATA_MODE_CONTINUNOUS:
+                sendResponse(TELEGRAM_TYPE_GET_CONTINUOUS_DATA);
+                break;
+        }
+        CyDelay(measurementConfig.delay_meas);
     }
 }
 
-void Timer_Config(void)
-{
-    Cy_SysInt_Init(&isrTimer_cfg, TimerInterruptHandler);
-    NVIC_ClearPendingIRQ(isrTimer_cfg.intrSrc);/* Clears the interrupt */
-    NVIC_EnableIRQ(isrTimer_cfg.intrSrc); /* Enable the core interrupt */
-    __enable_irq(); /* Enable global interrupts. */
-    
-    /* Start the TCPWM component in timer/counter mode. The return value of the
-     * function indicates whether the arguments are valid or not. It is not used
-     * here for simplicity. */
-    (void)Cy_TCPWM_Counter_Init(Timer_HW, Timer_CNT_NUM, &Timer_config);
-    Cy_TCPWM_Enable_Multiple(Timer_HW, Timer_CNT_MASK); /* Enable the counter instance */
-    
-    /* Set the timer period in milliseconds. To count N cycles, period should be
-     * set to N-1. */
-    Cy_TCPWM_Counter_SetPeriod(Timer_HW, Timer_CNT_NUM, 100000 - 1); //1000-1=1ms
-    
-    /* Trigger a software reload on the counter instance. This is required when 
-     * no other hardware input signal is connected to the component to act as
-     * a trigger source. */
-    Cy_TCPWM_TriggerReloadOrIndex(Timer_HW, Timer_CNT_MASK); 
-}
 
-
-void TimerInterruptHandler(void)
-{
-   
-    /* Clear the terminal count interrupt */
-    Cy_TCPWM_ClearInterrupt(Timer_HW, Timer_CNT_NUM, CY_TCPWM_INT_ON_TC);
-    
-    
-    /*ADC task*/
-    readADC();
-    sendData();
-    
-}
-
-void sendData(void)
-{
-
-        for(uint8 i = 0;i < 8;i++) {
-            for(uint8 j = 0;j < 8;j++) {
-                printf("%.3f,", v_patch[i][j]);
-            }
-        }
-        printf("\r\n");
- 
-}
 
 void readADC(void)
 {
 
-    for(uint8 i = 0;i < 8;i++)
+    for(int y = measurementConfig.ymin ;y < measurementConfig.ymax + 1;y++)
     {
-        AMux_1_FastSelect(i);
-        for(uint8 j = 0; j < 8; j++)
+        AMux_1_FastSelect(y);
+        for(int x = measurementConfig.xmin; x < measurementConfig.xmax + 1; x++)
         {
-            AMux_2_FastSelect(j); 
-            CyDelayUs(300);
+            AMux_2_FastSelect(x); 
+            CyDelayUs(measurementConfig.delay_switch);
             ADC_StartConvert();
             while (!ADC_IsEndConversion(CY_SAR_WAIT_FOR_RESULT));
             ADC_StopConvert();
-            v_patch[i][j] = ADC_CountsTo_Volts(0, ADC_GetResult16(0)); 
+            measurementData.voltage_count[y][x] = ADC_GetResult16(0); 
         }  
     }
 
 }
 
-void SysTick_Callback() {
-    timestamp++;
+
+
+/***************************************
+ *  Command implementation
+ ****************************************/
+void setLED(void) {
+    switch(measurementConfig.ledStatus) {
+        case LED_OFF:
+            Cy_GPIO_Write(LED_PORT, LED_NUM, 1);
+            break;
+        case LED_ON:
+            Cy_GPIO_Write(LED_PORT, LED_NUM, 0);
+            break;
+    }
+}
+
+void setOffsetAuto(void) {
+    for(int y = measurementConfig.ymin ;y < measurementConfig.ymax + 1;y++)
+    {
+        for(int x = measurementConfig.xmin; x < measurementConfig.xmax + 1; x++)
+        {
+            measurementData.offset_count[y][x] = measurementData.voltage_count[y][x]; 
+        }  
+    }
+}
+
+void setOffsetManual(uint16_t offset, uint8_t y, uint8_t x) {
+    measurementData.offset_count[y][x] = offset;
 }
 
 
+
+/***************************************
+ *  Communication implementatio 
+ ****************************************/
 void receiveRequest() {
     
-    char rxBuffer[64] = "";
-    readUntil(rxBuffer, sizeof(rxBuffer),TELEGRAM_END);
+    uint8_t rxBuffer[256];
+    readUntil(rxBuffer, sizeof(rxBuffer),TELEGRAM_END_BYTE);
     
-    char requestStart = rxBuffer[0];
-    char requestType = rxBuffer[1];
+    char requestStart = rxBuffer[TELEGRAM_BYTE_INDEX_START_BYTE];
+    char requestType = rxBuffer[TELEGRAM_BYTE_INDEX_TYPE];
     
-    if(requestStart == TELEGRAM_START) {
-        char txBuffer[64] = "";
+    if(requestStart == TELEGRAM_START_BYTE) {
         switch(requestType) {
             case TELEGRAM_TYPE_TEST:
-                sendResponse(txBuffer, sizeof(txBuffer), TELEGRAM_TYPE_TEST);
+            {
+                sendResponse(TELEGRAM_TYPE_TEST);
                 break;
+            }
                 
             case TELEGRAM_TYPE_SET_LED:
+            {
+                measurementConfig.ledStatus = rxBuffer[REQUEST_BYTE_INDEX_LED_STATUS];
+                setLED();
                 break;
+            }
                 
-            case TELEGRAM_TYPE_GET_SINGLE_SENSOR_DATA:
+            case TELEGRAM_TYPE_GET_SINGLE_DATA:
+            {
+                measurementConfig.get_data_mode = GET_DATA_MODE_SINGLE;
+                measurementConfig.xmin = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_XMIN];
+                measurementConfig.xmax = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_XMAX];
+                measurementConfig.ymin = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_YMIN];
+                measurementConfig.ymax = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_YMAX];
+                measurementConfig.m_values = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MVALUES];
+                measurementConfig.delay_switch = ((uint16_t)rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_SWITCH_HIGH] << 8) | rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_SWITCH_LOW];
+                measurementConfig.delay_meas = ((uint16_t)rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MEAS_HIGH] << 8) | rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MEAS_LOW];
                 break;
+            }
                 
-            case TELEGRAM_TYPE_GET_CONTINUOUS_SENSOR_DATA:
+                
+            case TELEGRAM_TYPE_GET_CONTINUOUS_DATA:
+            {
+                measurementConfig.get_data_mode = GET_DATA_MODE_CONTINUNOUS;
+                measurementConfig.xmin = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_XMIN];
+                measurementConfig.xmax = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_XMAX];
+                measurementConfig.ymin = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_YMIN];
+                measurementConfig.ymax = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_YMAX];
+                measurementConfig.m_values = rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MVALUES];
+                measurementConfig.delay_switch = ((uint16_t)rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_SWITCH_HIGH] << 8) | rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_SWITCH_LOW];
+                measurementConfig.delay_meas = ((uint16_t)rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MEAS_HIGH] << 8) | rxBuffer[REQUEST_BYTE_INDEX_GET_DATA_MEAS_LOW];
                 break;
+            }
                 
             case TELEGRAM_TYPE_SET_OFFSET_AUTO:
+            {
+                setOffsetAuto();
+                sendResponse(TELEGRAM_TYPE_SET_OFFSET_AUTO);
                 break;
+            }
                 
             case TELEGRAM_TYPE_SET_OFFSET_MANUAL:
+            {
+                for(int i = 0; i < NUM_PATCH_X*NUM_PATCH_Y; ++i) 
+                {
+                    uint8_t offset_high = rxBuffer[TELEGRAM_BYTE_INDEX_ARGS_START + 2 * i];
+                    uint8_t offset_low = rxBuffer[TELEGRAM_BYTE_INDEX_ARGS_START + 2 * i + 1];
+                    uint16_t offset = ((uint16_t)offset_high << 8) | offset_low;
+                    setOffsetManual(offset, i/NUM_PATCH_Y, i%NUM_PATCH_Y);
+                }
                 break;
+            }
 
             case TELEGRAM_TYPE_STOP_SENSOR_DATA:
+            {
+                measurementConfig.get_data_mode = GET_DATA_MODE_STOP;
                 break;
+            }
                
             case TELEGRAM_TYPE_GET_SAMPLING_FREQUENCY:
+            {
                 break;
+            }
+            default:
+            {
+                sendResponse(TELEGRAM_TYPE_ERROR);
+            }
+                
         }
     }
 }
 
 
-void sendResponse(char* buffer, size_t size, char type) {
+void sendResponse(char type) {
+    uint8_t txBuffer[256];
     switch(type) {
         case TELEGRAM_TYPE_TEST: 
-            buffer[0] = TELEGRAM_START;
-            insertString(buffer, size, 1, RESPONSE_TEST);
-            buffer[strlen(buffer)] = TELEGRAM_END;
-            write(buffer);
+        {
+            txBuffer[TELEGRAM_BYTE_INDEX_START_BYTE] = TELEGRAM_START_BYTE;
+            txBuffer[TELEGRAM_BYTE_INDEX_TYPE] = TELEGRAM_TYPE_TEST;
+            pushStringToBuffer(txBuffer, sizeof(txBuffer), TELEGRAM_BYTE_INDEX_ARGS_START, RESPONSE_TEST);
+            txBuffer[RESPONSE_BYTE_INDEX_TEST_END_BYTE] = TELEGRAM_END_BYTE;
+            write(txBuffer,RESPONSE_LENGTH_TEST);
             break;
+        }
+            
+        case TELEGRAM_TYPE_GET_SINGLE_DATA:
+        case TELEGRAM_TYPE_GET_CONTINUOUS_DATA:
+        {
+            txBuffer[TELEGRAM_BYTE_INDEX_START_BYTE] = TELEGRAM_START_BYTE;
+            txBuffer[TELEGRAM_BYTE_INDEX_TYPE] = TELEGRAM_TYPE_GET_SINGLE_DATA;
+            int idx = TELEGRAM_BYTE_INDEX_ARGS_START;
+            for(int y = 0; y < NUM_PATCH_Y; y++) {
+                for(int x = 0; x < NUM_PATCH_X; x++) {
+                    uint16_t voltage_count_after_offset = measurementData.voltage_count[y][x] - measurementData.offset_count[y][x];
+                    uint8_t voltage_count_low = voltage_count_after_offset & 0xFF;
+                    uint8_t voltage_count_high = (voltage_count_after_offset >> 8) & 0xFF;
+                    txBuffer[idx] = voltage_count_high;
+                    idx++;
+                    txBuffer[idx] = voltage_count_low;
+                    idx++;
+                }
+            }
+            txBuffer[RESPONSE_BYTE_INDEX_GET_DATA_END_BYTE] = TELEGRAM_END_BYTE;
+            write(txBuffer, REPONSE_LENGTH_GET_DATA);
+            break;
+        }
+        case TELEGRAM_TYPE_SET_OFFSET_AUTO:
+        {
+            txBuffer[TELEGRAM_BYTE_INDEX_START_BYTE] = TELEGRAM_START_BYTE;
+            txBuffer[TELEGRAM_BYTE_INDEX_TYPE] = TELEGRAM_TYPE_SET_OFFSET_AUTO;
+            int idx = TELEGRAM_BYTE_INDEX_ARGS_START;
+            for(int y = 0; y < NUM_PATCH_Y; y++) {
+                for(int x = 0; x < NUM_PATCH_X; x++) {
+                    uint16 offset = measurementData.offset_count[y][x];
+                    uint8_t offset_count_low =  offset & 0xFF;
+                    uint8_t offse_count_high = (offset >> 8) & 0xFF;
+                    txBuffer[idx] = offse_count_high;
+                    idx++;
+                    txBuffer[idx] = offset_count_low;
+                    idx++;
+                }
+            }
+            txBuffer[RESPONSE_BYTE_INDEX_SET_OFFSET_AUTO_END_BYTE] = TELEGRAM_END_BYTE;
+            write(txBuffer, RESPONSE_LENGTH_SET_OFFSET_AUTO);
+            break;
+        }
+        case TELEGRAM_TYPE_ERROR: {
+            txBuffer[TELEGRAM_BYTE_INDEX_START_BYTE] = TELEGRAM_START_BYTE;
+            txBuffer[TELEGRAM_BYTE_INDEX_TYPE] = TELEGRAM_TYPE_ERROR;
+            txBuffer[RESPONSE_BYTE_INDEX_ERROR_END_BYTE] = TELEGRAM_END_BYTE;
+            write(txBuffer, RESPONSE_LENGTH_ERROR);
+            break;
+        }
+        
     }
 }
 
+void read(uint8_t* buffer, size_t size) {
+    
 
 
+}
 
-void readUntil(char* buffer, size_t size, const char expected) 
+void readUntil(uint8_t* buffer, size_t size, const uint8_t expected) 
 {   
-    char temp[1];
+    uint8_t temp[1];
     unsigned int i = 0;
     while(true)
     {   
@@ -264,21 +497,15 @@ void readUntil(char* buffer, size_t size, const char expected)
     }        
 }
 
-void readline(char* buffer, size_t size) 
-{   
-    readUntil(buffer, size, '\n');
-}
 
-void write(char* buffer) {
-    Cy_SCB_UART_PutArrayBlocking(UART_HW, buffer, strlen(buffer));
+void write(uint8_t* buffer, size_t size) {
+    Cy_SCB_UART_PutArrayBlocking(UART_HW, buffer, size);
     /* Blocking wait for transfer completion */
     while (!Cy_SCB_UART_IsTxComplete(UART_HW));
 }
 
 
-
-
-void insertString(char* buffer, size_t size, unsigned int position, char* str) {
+void pushStringToBuffer(uint8_t* buffer, size_t size, unsigned int position, char* str) {
     for(unsigned int i = 0; i < strlen(str); ++i) {
         if(position + i == size) return;
         buffer[position + i] = str[i];

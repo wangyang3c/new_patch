@@ -24,13 +24,18 @@
 #define NUM_PATCH_X 8
 #define NUM_PATCH_Y 8
 
-#define AMUX_1_INPUT_INDEX_REFERENCE0 8
-#define AMUX_1_INPUT_INDEX_REFERENCE1 9
-#define AMUX_1_INPUT_INDEX_REFERENCE2 10
+#define NUM_REFERENCE 3
+#define AMUX_1_INPUT_CHANNEL_REFERENCE0 8
+#define AMUX_1_INPUT_CHANNEL_REFERENCE1 9
+#define AMUX_1_INPUT_CHANNEL_REFERENCE2 10
 #define AMUX_2_INPUT_INDEX_GND 8
 #define RESISTANCE_REFERENCE0 10e3  //Ohm
 #define RESISTANCE_REFERENCE1 100e3
 #define RESISTANCE_REFERENCE2 1000e3
+int resistance_reference[NUM_REFERENCE] = {RESISTANCE_REFERENCE0, RESISTANCE_REFERENCE1, RESISTANCE_REFERENCE2};
+int channel_reference[NUM_REFERENCE] = {AMUX_1_INPUT_CHANNEL_REFERENCE0, AMUX_1_INPUT_CHANNEL_REFERENCE1, AMUX_1_INPUT_CHANNEL_REFERENCE2};
+
+#define VOLTAGE_VCC 3.3
 
 // Telegram pblic
 #define TELEGRAM_START_BYTE 0x81
@@ -89,17 +94,15 @@
 #define RESPONSE_BYTE_INDEX_SET_OFFSET_AUTO_END_BYTE 130
 
 
-// Set offset manual
-#define TELEGRAM_TYPE_SET_OFFSET_MANUAL 0x06
+// Set referece
+#define TELEGRAM_TYPE_SET_REFERENCE 0x07
 // Request
-#define REQUEST_LENGTH_SET_OFFSET_MANUAL 131
-// Response
-
-
-// Set gain
-#define TELEGRAM_TYPE_SET_GAIN '\x07'
-// Request
-#define REQUEST_LENGTH_SET_GAIN
+#define REQUEST_LENGTH_SET_REFERENCE 4
+#define REQUEST_BYTE_INDEX_SET_REFERENCE 2
+#define REQUEST_PARAMETER_SET_REFERENCE_REFERENCE0 0x00
+#define REQUEST_PARAMETER_SET_REFERENCE_REFERENCE1 0x01
+#define REQUEST_PARAMETER_SET_REFERENCE_REFERENCE2 0x02
+#define REQUEST_PARAMETER_SET_REFERENCE_AUTO 0xFF
 // Response
 
 
@@ -156,7 +159,7 @@ void sendData(void);
 void readADC(void);
 void setLED(void);
 void setOffsetAuto(void);
-void setOffsetManual(uint16_t offset, uint8_t y, uint8_t x);
+void setReferenceAuto(void);
 
 void receiveRequest(void);
 void sendResponse(char type);
@@ -169,10 +172,6 @@ void pushStringToBuffer(uint8_t* buffer, size_t size, unsigned int position, cha
 /***************************************
  * Global variables
  ****************************************/
-float offset[8][8];
-float v_patch[8][8];
-int referenceChannel = 1;
-
 struct {
     uint8_t ledStatus;
     uint8_t xmin;
@@ -182,19 +181,19 @@ struct {
     uint8_t m_values;
     uint16_t delay_switch;   //us
     uint16_t delay_meas;     //ms
-    uint8_t channel_reference;
+    uint8_t index_reference[NUM_PATCH_Y][NUM_PATCH_X];
     uint8_t get_data_mode;
 } measurementConfig = 
 {
     .ledStatus = LED_ON,
     .xmin = 0,
-    .xmax = 7,
+    .xmax = 3,
     .ymin = 0,
-    .ymax = 7,
+    .ymax = 3,
     .m_values = 16,
     .delay_switch = 300,
     .delay_meas = 50,
-    .channel_reference = AMUX_1_INPUT_INDEX_REFERENCE0,
+    .index_reference = {[0 ... NUM_PATCH_Y-1] = {[0 ... NUM_PATCH_X-1] = 0}},
     .get_data_mode = GET_DATA_MODE_STOP
 };
 
@@ -202,9 +201,14 @@ struct {
 struct {
     int timestamp;
     uint16_t voltage_count[NUM_PATCH_Y][NUM_PATCH_X];
+    float voltage[NUM_PATCH_Y][NUM_PATCH_X];
+    uint16_t resistance_count[NUM_PATCH_Y][NUM_PATCH_X];
+    float resistance [NUM_PATCH_Y][NUM_PATCH_X];
     uint16_t offset_count[NUM_PATCH_Y][NUM_PATCH_X];
+    float offset[NUM_PATCH_Y][NUM_PATCH_X];
+    uint16_t resistance_offset_count[NUM_PATCH_Y][NUM_PATCH_X];
+    uint16_t resistance_offset[NUM_PATCH_Y][NUM_PATCH_X];
 } measurementData;
-
 
 
 /*******************************************************************************
@@ -230,8 +234,7 @@ int main(void)
     setvbuf(stdin, NULL, _IONBF, 0);
 
     AMux_1_Start();
-    AMux_1_Connect(measurementConfig.channel_reference);
-
+    
     AMux_2_Start();
     AMux_2_Connect(AMUX_2_INPUT_INDEX_GND);
 
@@ -265,7 +268,18 @@ int main(void)
                 sendResponse(TELEGRAM_TYPE_GET_CONTINUOUS_DATA);
                 break;
         }
-        CyDelay(measurementConfig.delay_meas);
+        
+        
+        for(uint8 i = 0;i < 8;i++) {
+            for(uint8 j = 0;j < 8;j++) {
+                printf("%.2f,", measurementData.resistance[i][j]);
+            }
+        }
+        printf("\r\n");
+        CyDelay(50);
+        setReferenceAuto();
+        
+        //CyDelay(measurementConfig.delay_meas);
     }
 }
 
@@ -276,17 +290,33 @@ void readADC(void)
 
     for(int y = measurementConfig.ymin ;y < measurementConfig.ymax + 1;y++)
     {
-        AMux_1_FastSelect(y);
         for(int x = measurementConfig.xmin; x < measurementConfig.xmax + 1; x++)
         {
+            
+            AMux_1_Select(channel_reference[measurementConfig.index_reference[y][x]]);
+            AMux_1_Connect(y);
             AMux_2_FastSelect(x); 
             CyDelayUs(measurementConfig.delay_switch);
             ADC_StartConvert();
             while (!ADC_IsEndConversion(CY_SAR_WAIT_FOR_RESULT));
             ADC_StopConvert();
             measurementData.voltage_count[y][x] = ADC_GetResult16(0); 
+            measurementData.voltage[y][x] = ADC_CountsTo_Volts(0, measurementData.voltage_count[y][x]);
+            measurementData.resistance[y][x] = measurementData.voltage[y][x]/
+                                                (VOLTAGE_VCC - measurementData.voltage[y][x])*
+                                                resistance_reference[measurementConfig.index_reference[y][x]];
         }  
     }
+
+}
+
+uint16_t convertResistanceToCode(float offset, float resistance, int factor_a, int factor_b) {
+    float resistance_difference = resistance -  offset;
+    float minimum = offset*(1.0-(float)factor_a);
+    float maximum = offset*(1.0+(float)factor_b);
+    float lsb = (maximum - minimum)/65535;
+    uint16 code = resistance_difference / lsb;
+    return code;
 
 }
 
@@ -316,9 +346,26 @@ void setOffsetAuto(void) {
     }
 }
 
-void setOffsetManual(uint16_t offset, uint8_t y, uint8_t x) {
-    measurementData.offset_count[y][x] = offset;
+void setReferenceAuto(void)
+{
+  
+     for(int y = measurementConfig.ymin ;y < measurementConfig.ymax + 1;y++)
+    {
+        for(int x = measurementConfig.xmin; x < measurementConfig.xmax + 1; x++)
+        {
+            if (measurementData.voltage[y][x] < 1.65)
+            {
+                measurementConfig.index_reference[y][x] = (measurementConfig.index_reference[y][x] - 1) % NUM_REFERENCE;
+            }
+            else if (measurementData.voltage[y][x] > 3) {
+                measurementConfig.index_reference[y][x] = (measurementConfig.index_reference[y][x] + 1) % NUM_REFERENCE;
+            }
+        }  
+    }  
+  
+    
 }
+
 
 
 
@@ -382,17 +429,6 @@ void receiveRequest() {
                 break;
             }
                 
-            case TELEGRAM_TYPE_SET_OFFSET_MANUAL:
-            {
-                for(int i = 0; i < NUM_PATCH_X*NUM_PATCH_Y; ++i) 
-                {
-                    uint8_t offset_high = rxBuffer[TELEGRAM_BYTE_INDEX_ARGS_START + 2 * i];
-                    uint8_t offset_low = rxBuffer[TELEGRAM_BYTE_INDEX_ARGS_START + 2 * i + 1];
-                    uint16_t offset = ((uint16_t)offset_high << 8) | offset_low;
-                    setOffsetManual(offset, i/NUM_PATCH_Y, i%NUM_PATCH_Y);
-                }
-                break;
-            }
 
             case TELEGRAM_TYPE_STOP_SENSOR_DATA:
             {

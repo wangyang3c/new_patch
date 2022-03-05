@@ -160,6 +160,8 @@ void readADC(void);
 void setLED(void);
 void setOffsetAuto(void);
 void setReferenceAuto(void);
+void setResistanceOffset(void);
+uint16_t convertResistanceToCode(float offset, float resistance, float factor_a, float factor_b);
 
 void receiveRequest(void);
 void sendResponse(char type);
@@ -207,7 +209,7 @@ struct {
     uint16_t offset_count[NUM_PATCH_Y][NUM_PATCH_X];
     float offset[NUM_PATCH_Y][NUM_PATCH_X];
     uint16_t resistance_offset_count[NUM_PATCH_Y][NUM_PATCH_X];
-    uint16_t resistance_offset[NUM_PATCH_Y][NUM_PATCH_X];
+    float resistance_offset[NUM_PATCH_Y][NUM_PATCH_X];
 } measurementData;
 
 
@@ -249,7 +251,9 @@ int main(void)
     (void)Cy_CTB_OpampInit(Opamp_2_CTB_HW, Opamp_2_OPAMP_NUM, &Opamp_2_opampConfig);
     Cy_CTB_Enable(Opamp_2_CTB_HW);
 
-
+    readADC();
+    setResistanceOffset();
+    
     for (;;)
     {
         /* Place your application code here. */
@@ -272,7 +276,8 @@ int main(void)
         
         for(uint8 i = 0;i < 8;i++) {
             for(uint8 j = 0;j < 8;j++) {
-                printf("%.2f,", measurementData.resistance[i][j]);
+                //printf("%.2f,", measurementData.resistance[i][j] - measurementData.resistance_offset[i][j]);
+                printf("%d,", measurementData.resistance_count[i][j]);
             }
         }
         printf("\r\n");
@@ -305,19 +310,27 @@ void readADC(void)
             measurementData.resistance[y][x] = measurementData.voltage[y][x]/
                                                 (VOLTAGE_VCC - measurementData.voltage[y][x])*
                                                 resistance_reference[measurementConfig.index_reference[y][x]];
+            measurementData.resistance_count[y][x] = convertResistanceToCode(measurementData.resistance_offset[y][x], measurementData.resistance[y][x], 1.0, 1.0);
         }  
     }
 
 }
 
-uint16_t convertResistanceToCode(float offset, float resistance, int factor_a, int factor_b) {
-    float resistance_difference = resistance -  offset;
-    float minimum = offset*(1.0-(float)factor_a);
-    float maximum = offset*(1.0+(float)factor_b);
+uint16_t convertResistanceToCode(float offset, float resistance, float factor_a, float factor_b) {
+    
+    float minimum = offset*(1.0-factor_a);
+    float maximum = offset*(1.0+factor_b);
     float lsb = (maximum - minimum)/65535;
-    uint16 code = resistance_difference / lsb;
+    uint16 code;
+    if(resistance < minimum) {
+        code = 0x0000;
+    
+    } else if(resistance > maximum) {
+        code = 0xFFFF;
+    } else {
+        code  = resistance / lsb;
+    }
     return code;
-
 }
 
 
@@ -364,6 +377,21 @@ void setReferenceAuto(void)
     }  
   
     
+}
+
+
+void setResistanceOffset(void) {
+    for(int y = measurementConfig.ymin ;y < measurementConfig.ymax + 1;y++)
+    {
+        for(int x = measurementConfig.xmin; x < measurementConfig.xmax + 1; x++)
+        { 
+            measurementData.resistance_offset[y][x] = measurementData.resistance[y][x];
+        }
+    
+    }    
+
+
+
 }
 
 

@@ -161,7 +161,8 @@ void setLED(void);
 void setOffsetAuto(void);
 void setReferenceAuto(void);
 void setResistanceOffset(void);
-uint16_t convertResistanceToCode(float offset, float resistance, float factor_a, float factor_b);
+uint16_t convertResistanceToCode(float offset, float resistance, float factor);
+void SysTick_Callback();
 
 void receiveRequest(void);
 void sendResponse(char type);
@@ -231,7 +232,9 @@ int main(void)
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     __enable_irq(); /* Enable global interrupts. */
 
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    Cy_SysTick_Init(CY_SYSTICK_CLOCK_SOURCE_CLK_CPU , 100000); //Clock frequency 100MHz (1/100us per tick)
+    Cy_SysTick_SetCallback(0,SysTick_Callback);
+    
     UART_Start();
     setvbuf(stdin, NULL, _IONBF, 0);
 
@@ -310,27 +313,33 @@ void readADC(void)
             measurementData.resistance[y][x] = measurementData.voltage[y][x]/
                                                 (VOLTAGE_VCC - measurementData.voltage[y][x])*
                                                 resistance_reference[measurementConfig.index_reference[y][x]];
-            measurementData.resistance_count[y][x] = convertResistanceToCode(measurementData.resistance_offset[y][x], measurementData.resistance[y][x], 1.0, 1.0);
+            measurementData.resistance_count[y][x] = convertResistanceToCode(measurementData.resistance_offset[y][x], measurementData.resistance[y][x], 1.0);
         }  
     }
 
 }
 
-uint16_t convertResistanceToCode(float offset, float resistance, float factor_a, float factor_b) {
+uint16_t convertResistanceToCode(float offset, float resistance, float factor) {
     
-    float minimum = offset*(1.0-factor_a);
-    float maximum = offset*(1.0+factor_b);
+    float minimum = -offset*factor;
+    float maximum = offset*factor;
     float lsb = (maximum - minimum)/65535;
+    float difference = resistance - offset;
     uint16 code;
-    if(resistance < minimum) {
-        code = 0x0000;
+    if(difference < minimum) {
+        code = 0x8000;
     
-    } else if(resistance > maximum) {
-        code = 0xFFFF;
+    } else if(difference > maximum) {
+        code = 0x7FFF;
     } else {
-        code  = resistance / lsb;
+        code  = (difference - minimum) / lsb - 0x7FFF;
     }
     return code;
+}
+
+
+void SysTick_Callback() {
+    measurementData.timestamp++;
 }
 
 

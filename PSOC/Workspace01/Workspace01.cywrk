@@ -9,6 +9,7 @@
 <projects>
 <v>.\Design01.cydsn\Design01.cyprj</v>
 <v>.\Design01_Copy_01.cydsn\Design01_Copy_01.cyprj</v>
+<v>.\Systick_test.cydsn\Systick_test.cyprj</v>
 </projects>
 <workspace_id v="c7b0eec1-93ad-497d-ba78-f88b91146519" />
 <WriteAppVersionLastSavedWith v="4.4.0.80" />

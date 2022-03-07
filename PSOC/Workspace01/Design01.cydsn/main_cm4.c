@@ -54,7 +54,7 @@ int main(void)
     setvbuf(stdin, NULL, _IONBF, 0);
 
     AMux_1_Start();
-    AMux_1_Connect(8);
+    AMux_1_Connect(9);
 
     AMux_2_Start();
     AMux_2_Connect(8);
@@ -103,7 +103,7 @@ void readADC(void)
         for(uint8 j = 0; j < 8; j++)
         {
             AMux_2_FastSelect(j); 
-            CyDelayUs(300);
+            CyDelayUs(500);
             ADC_StartConvert();
             while (!ADC_IsEndConversion(CY_SAR_WAIT_FOR_RESULT));
             ADC_StopConvert();

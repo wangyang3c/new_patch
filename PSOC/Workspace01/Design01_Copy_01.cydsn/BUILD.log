@@ -1,4 +1,4 @@
---------------- Build Started: 03/06/2022 23:54:15 Project: Design01_Copy_01, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 03/16/2022 11:54:27 Project: Design01_Copy_01, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 The code generation step is up to date.
 The compile step is up to date, no work needs to be done.
 The link step is up to date, no work needs to be done.
@@ -13,4 +13,4 @@ Application checksum calculated and stored in ELF section .cychecksum
 Checksum calculated and stored in ELF section .cymeta
 "C:\Program Files (x86)\Cypress\PDL\3.1.3\tools\win\elf\cymcuelftool.exe" -A D:\new_patch\PSOC\Workspace01\Design01_Copy_01.cydsn\CortexM4\ARM_GCC_541\Debug\Design01_Copy_01.elf
 code:28936	sram:3320
---------------- Build Succeeded: 03/06/2022 23:54:17 ---------------
+--------------- Build Succeeded: 03/16/2022 11:54:30 ---------------

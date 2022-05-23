@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>C:\Users\Messknecht\Desktop\Masterarbeit\PCB\psoc_shield\psoc_shieldV3\psoc_shield.sch</source>
+    <date>11/25/2021 12:49:49 PM</date>
+    <tool>Eeschema (5.1.10)-1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Interface between PSOC and test platform</title>
+        <company/>
+        <rev>V1.0</rev>
+        <date>2021-11-11</date>
+        <source>psoc_shield.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="J4">
+      <value>Conn_01x04</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x04" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>618D0463</tstamp>
+    </comp>
+    <comp ref="J2">
+      <value>Conn_01x03</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x03" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>618D273B</tstamp>
+    </comp>
+    <comp ref="J3">
+      <value>Conn_01x03</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x03" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>618F7D74</tstamp>
+    </comp>
+    <comp ref="J9">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61940890</tstamp>
+    </comp>
+    <comp ref="J10">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61947182</tstamp>
+    </comp>
+    <comp ref="J5">
+      <value>Conn_01x04</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x04" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>618E6AA3</tstamp>
+    </comp>
+    <comp ref="J6">
+      <value>Conn_01x03</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x03" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61975922</tstamp>
+    </comp>
+    <comp ref="U1">
+      <value>LM334Z</value>
+      <footprint>Package_TO_SOT_THT:TO-92_Inline</footprint>
+      <datasheet>http://www.ti.com/lit/ds/symlink/lm134.pdf</datasheet>
+      <libsource lib="Reference_Current" part="LM334Z" description="1μA to 10mA 3-Terminal Adjustable Current Source, TO-92"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>6195D31B</tstamp>
+    </comp>
+    <comp ref="C1">
+      <value>10uF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>6194C48A</tstamp>
+    </comp>
+    <comp ref="H1">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61AAC8AD</tstamp>
+    </comp>
+    <comp ref="H2">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61ABE6F3</tstamp>
+    </comp>
+    <comp ref="J1">
+      <value>Conn_01x10</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x10_P2.54mm_Horizontal</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x10" description="Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619790B7</tstamp>
+    </comp>
+    <comp ref="H3">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619AB8A8</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>1N457</value>
+      <footprint>Diode_THT:D_DO-35_SOD27_P5.08mm_Vertical_AnodeUp</footprint>
+      <datasheet>http://componentsearchengine.com/Datasheets/1/1N457.pdf</datasheet>
+      <fields>
+        <field name="Arrow Part Number">1N457</field>
+        <field name="Arrow Price/Stock">https://www.arrow.com/en/products/1n457/on-semiconductor?region=nac</field>
+        <field name="Description">Small Signal Diode</field>
+        <field name="Manufacturer_Name">ON Semiconductor</field>
+        <field name="Manufacturer_Part_Number">1N457</field>
+        <field name="Mouser Part Number">512-1N457</field>
+        <field name="Mouser Price/Stock">https://www.mouser.co.uk/ProductDetail/ON-Semiconductor-Fairchild/1N457/?qs=r%2Fl4stf1ffqcHzwvnL8sxw%3D%3D</field>
+      </fields>
+      <libsource lib="Device" part="D" description="Diode"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>618C8546</tstamp>
+    </comp>
+    <comp ref="J14">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6EC4</tstamp>
+    </comp>
+    <comp ref="J15">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6ECA</tstamp>
+    </comp>
+    <comp ref="J16">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6ED1</tstamp>
+    </comp>
+    <comp ref="J17">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6ED8</tstamp>
+    </comp>
+    <comp ref="J18">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6EDF</tstamp>
+    </comp>
+    <comp ref="J13">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6EE9</tstamp>
+    </comp>
+    <comp ref="J12">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C6EEF</tstamp>
+    </comp>
+    <comp ref="J11">
+      <value>Conn_01x10</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x10_P2.54mm_Horizontal</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x10" description="Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619C8849</tstamp>
+    </comp>
+    <comp ref="J7">
+      <value>Conn_01x02</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>619CF0F3</tstamp>
+    </comp>
+    <comp ref="H4">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>61A521C4</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector_Generic" part="Conn_01x02">
+      <description>Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x02</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x03">
+      <description>Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x03</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x04">
+      <description>Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x04</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x10">
+      <description>Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x10</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C">
+      <description>Unpolarized capacitor</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="D">
+      <description>Diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TO-???*</fp>
+        <fp>*_Diode_*</fp>
+        <fp>*SingleDiode*</fp>
+        <fp>D_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Mechanical" part="MountingHole">
+      <description>Mounting Hole without connection</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>MountingHole*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MountingHole</field>
+      </fields>
+    </libpart>
+    <libpart lib="Reference_Current" part="LM334Z">
+      <aliases>
+        <alias>LM334Z-LFT1</alias>
+        <alias>LM234Z-3</alias>
+        <alias>LM234Z-6</alias>
+      </aliases>
+      <description>1μA to 10mA 3-Terminal Adjustable Current Source, TO-92</description>
+      <docs>http://www.ti.com/lit/ds/symlink/lm134.pdf</docs>
+      <footprints>
+        <fp>TO*92*Inline*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">LM334Z</field>
+        <field name="Footprint">Package_TO_SOT_THT:TO-92_Inline</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+        <pin num="3" name="~" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Connector_Generic.lib</uri>
+    </library>
+    <library logical="Device">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Device.lib</uri>
+    </library>
+    <library logical="Mechanical">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Mechanical.lib</uri>
+    </library>
+    <library logical="Reference_Current">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Reference_Current.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Rgain2">
+      <node ref="J13" pin="1"/>
+      <node ref="J11" pin="2"/>
+    </net>
+    <net code="2" name="Rgain5">
+      <node ref="J11" pin="5"/>
+      <node ref="J16" pin="1"/>
+    </net>
+    <net code="3" name="Inv1">
+      <node ref="J11" pin="6"/>
+      <node ref="J11" pin="7"/>
+      <node ref="J17" pin="1"/>
+    </net>
+    <net code="4" name="Out1">
+      <node ref="J17" pin="2"/>
+      <node ref="J11" pin="8"/>
+    </net>
+    <net code="5" name="Out2">
+      <node ref="J11" pin="10"/>
+      <node ref="J18" pin="2"/>
+    </net>
+    <net code="6" name="Rgain4">
+      <node ref="J11" pin="4"/>
+      <node ref="J15" pin="1"/>
+    </net>
+    <net code="7" name="Rgain1">
+      <node ref="J12" pin="1"/>
+      <node ref="J11" pin="1"/>
+    </net>
+    <net code="8" name="Rgain3">
+      <node ref="J11" pin="3"/>
+      <node ref="J14" pin="1"/>
+    </net>
+    <net code="9" name="Inv2">
+      <node ref="J18" pin="1"/>
+      <node ref="J14" pin="2"/>
+      <node ref="J13" pin="2"/>
+      <node ref="J15" pin="2"/>
+      <node ref="J11" pin="9"/>
+      <node ref="J12" pin="2"/>
+      <node ref="J16" pin="2"/>
+    </net>
+    <net code="10" name="VCC">
+      <node ref="J4" pin="4"/>
+      <node ref="J2" pin="3"/>
+      <node ref="J1" pin="7"/>
+      <node ref="U1" pin="1"/>
+      <node ref="J7" pin="1"/>
+      <node ref="C1" pin="1"/>
+    </net>
+    <net code="11" name="/VREF">
+      <node ref="J7" pin="2"/>
+      <node ref="J3" pin="3"/>
+    </net>
+    <net code="12" name="I_SET">
+      <node ref="D1" pin="1"/>
+      <node ref="J5" pin="4"/>
+      <node ref="J10" pin="2"/>
+    </net>
+    <net code="13" name="/DiodeA">
+      <node ref="J9" pin="2"/>
+      <node ref="U1" pin="3"/>
+      <node ref="D1" pin="2"/>
+    </net>
+    <net code="14" name="4PM+">
+      <node ref="J5" pin="1"/>
+      <node ref="J1" pin="5"/>
+    </net>
+    <net code="15" name="4PM-">
+      <node ref="J5" pin="2"/>
+      <node ref="J1" pin="6"/>
+    </net>
+    <net code="16" name="ForceBridge-">
+      <node ref="J4" pin="2"/>
+      <node ref="J1" pin="4"/>
+    </net>
+    <net code="17" name="GND">
+      <node ref="J1" pin="8"/>
+      <node ref="C1" pin="2"/>
+      <node ref="J3" pin="2"/>
+      <node ref="J6" pin="3"/>
+      <node ref="J2" pin="2"/>
+      <node ref="J4" pin="3"/>
+      <node ref="J5" pin="3"/>
+    </net>
+    <net code="18" name="SensePosition">
+      <node ref="J2" pin="1"/>
+      <node ref="J1" pin="1"/>
+    </net>
+    <net code="19" name="SDA">
+      <node ref="J1" pin="10"/>
+      <node ref="J6" pin="1"/>
+    </net>
+    <net code="20" name="3PM">
+      <node ref="J1" pin="2"/>
+      <node ref="J3" pin="1"/>
+    </net>
+    <net code="21" name="ForceBridge+">
+      <node ref="J1" pin="3"/>
+      <node ref="J4" pin="1"/>
+    </net>
+    <net code="22" name="SCL">
+      <node ref="J1" pin="9"/>
+      <node ref="J6" pin="2"/>
+    </net>
+    <net code="23" name="/R">
+      <node ref="J10" pin="1"/>
+      <node ref="U1" pin="2"/>
+      <node ref="J9" pin="1"/>
+    </net>
+  </nets>
+</export>
